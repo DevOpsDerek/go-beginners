@@ -1,0 +1,10 @@
+# Binaries
+*.exe
+*.out
+*.test
+
+# Go build cache
+/vendor/
+
+# macOS
+.DS_Store

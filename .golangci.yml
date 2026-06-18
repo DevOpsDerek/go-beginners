@@ -1,0 +1,18 @@
+version: "2"
+
+linters:
+  default: none
+  enable:
+    - govet
+    - errcheck
+    - staticcheck
+    - unused
+    - ineffassign
+  settings:
+    govet:
+      enable-all: true
+  exclusions:
+    rules:
+      - path: _test\.go
+        linters:
+          - errcheck
