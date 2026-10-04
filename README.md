@@ -102,34 +102,25 @@ go run .
 
 ## Automation and human review
 
-CI retains the `Lint (golangci-lint)` and `Test (go test)` jobs, Go 1.22.12,
-golangci-lint v1.64.8, and the `go-test-results` artifact (`test-results.out`).
-The central `run-checked-script` Go API cannot preserve the existing verbose,
-uncached test command, artifact handling, or lint job, so these specialized
-jobs remain unchanged apart from immutable action pins and read-only
-permissions.
+CI retains the `Lint (golangci-lint)` and `Test (go test)` jobs, now using
+exact Go 1.22.12, golangci-lint v1.64.8, and the `go-test-results` artifact
+(`test-results.out`). The central `run-checked-script` Go API cannot preserve
+the existing verbose, uncached test command, artifact handling, or lint job,
+so these specialized jobs remain; their action references are SHA-pinned and
+the workflow token is read-only.
 
 The `validate-automation` job in the existing CI workflow calls the central
 `DevOpsDerek/workflows/.github/workflows/validate-agentic-workflows.yml` at
-commit `dac4b81c298cb3ea6821ea312efa5375f42d5ccb`. It checks Actions syntax and
-recompiles local GitHub Agentic Workflows (gh-aw) sources with v0.89.21,
-rejecting stale generated locks.
+commit `dac4b81c298cb3ea6821ea312efa5375f42d5ccb`. It validates Actions
+workflow syntax and compiles and checks generated locks whenever local gh-aw
+sources are present.
 
-`documentation-upkeep.md` imports the central documentation pattern at the
-same immutable commit, with imports embedded in its generated lock. It runs
-**only on manual dispatch** and cross-checks this README against lesson
-packages, exported symbols, tests, and CI configuration. The agent has
-read-only repository access; the isolated safe-output job can propose at most
-one **draft PR modifying only README.md**, with no fallback issue. It does not
-run lesson code, automatically merge, release, deploy, or publish.
-
-To update the workflow, install gh-aw v0.89.21, edit its Markdown source, and
-run `gh aw compile --validate --actionlint --no-check-update`. Commit and review
-the source and generated `.lock.yml` together. Manual execution requires the
-gh-aw Copilot engine credential (`COPILOT_GITHUB_TOKEN`) and repository
-permission for Actions to create pull requests. No credentials are configured
-by this change. A maintainer must review every proposed diff and run CI before
-merging; draft output is not a substitute for branch-protection rules.
+No agentic documentation-upkeep workflow is enabled. With the current gh-aw
+compiler, the generated conclusion job retains write permissions in addition
+to the isolated safe-output handler. The docs workflow was removed rather
+than weakening permissions or hand-editing its generated lock; reconsider it
+only after the central compiler can limit write scopes to the safe-output
+handler.
 
 ## Lesson Summary
 

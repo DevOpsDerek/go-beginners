@@ -8,6 +8,3 @@
 
 # macOS
 .DS_Store
-
-# gh-aw remote import download cache (imports are inlined in workflow locks)
-.github/aw/imports/
