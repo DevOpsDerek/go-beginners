@@ -20,18 +20,10 @@ jobs:
 
   lint:
     name: Lint (golangci-lint)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        with:
-          persist-credentials: false
-      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
-        with:
-          go-version: "1.22.12"
-      - name: Run golangci-lint
-        uses: golangci/golangci-lint-action@55c2c1448f86e01eaae002a5a3a9624417608d84 # v6.5.2
-        with:
-          version: v1.64.8
+    uses: DevOpsDerek/workflows/.github/workflows/lint-go.yml@30f86d7d8536364b0a31de4bc66214b39e8785bb
+    with:
+      go-version: "1.23.12"
+      golangci-lint-version: "1.64.8"
 
   test:
     name: Test (go test)

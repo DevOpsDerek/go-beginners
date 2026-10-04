@@ -102,12 +102,14 @@ go run .
 
 ## Automation and human review
 
-CI retains the `Lint (golangci-lint)` and `Test (go test)` jobs, now using
-exact Go 1.22.12, golangci-lint v1.64.8, and the `go-test-results` artifact
-(`test-results.out`). The central `run-checked-script` Go API cannot preserve
-the existing verbose, uncached test command, artifact handling, or lint job,
-so these specialized jobs remain; their action references are SHA-pinned and
-the workflow token is read-only.
+CI retains separate `Lint (golangci-lint)` and `Test (go test)` jobs. Linting
+uses Go 1.23.12 and golangci-lint v1.64.8 through the central reusable Go lint
+workflow, pinned to commit
+`30f86d7d8536364b0a31de4bc66214b39e8785bb`; testing remains on Go 1.22.12
+and uploads the `go-test-results` artifact (`test-results.out`). The central
+`run-checked-script` Go API cannot preserve the existing verbose, uncached
+test command and artifact handling, so the specialized test job remains. The
+CI workflow uses read-only permissions and pinned action/workflow references.
 
 The `validate-automation` job in the existing CI workflow calls the central
 `DevOpsDerek/workflows/.github/workflows/validate-agentic-workflows.yml` at
