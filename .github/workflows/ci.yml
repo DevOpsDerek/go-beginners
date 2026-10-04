@@ -20,7 +20,7 @@ jobs:
 
   lint:
     name: Lint (golangci-lint)
-    uses: DevOpsDerek/workflows/.github/workflows/lint-go.yml@c4ac3847334c8944a48619ae4f3f0d622f4a074b
+    uses: DevOpsDerek/workflows/.github/workflows/lint-go.yml@35ec3f531b5eb0f0f42f232f23e1dc5735e36c35
     with:
       go-version: "1.23.12"
       golangci-lint-version: "1.64.8"
