@@ -21,7 +21,7 @@ You will learn how to:
 - Go 1.22+
 - A terminal
 - VS Code with the Go extension (recommended)
-- `golangci-lint` for local linting
+- `golangci-lint` v1.64.8 for local linting (the configuration uses the v1 format)
 
 ## Install Go and golangci-lint
 
@@ -31,11 +31,15 @@ Install Go from the official downloads page:
 Install `golangci-lint`:
 
 ```bash
-brew install golangci-lint
+go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.64.8
 ```
 
 Or see the official install guide:
 - https://golangci-lint.run/welcome/install/
+
+Use a Go toolchain supported by that linter release when installing it
+(Go 1.23.12 is a verified option). Installing the latest golangci-lint v2
+will not work with the existing v1 configuration.
 
 ## Project Layout
 
@@ -95,6 +99,28 @@ Then run:
 ```bash
 go run .
 ```
+
+## Automation and human review
+
+CI retains the `Lint (golangci-lint)` and `Test (go test)` jobs, now using
+exact Go 1.22.12, golangci-lint v1.64.8, and the `go-test-results` artifact
+(`test-results.out`). The central `run-checked-script` Go API cannot preserve
+the existing verbose, uncached test command, artifact handling, or lint job,
+so these specialized jobs remain; their action references are SHA-pinned and
+the workflow token is read-only.
+
+The `validate-automation` job in the existing CI workflow calls the central
+`DevOpsDerek/workflows/.github/workflows/validate-agentic-workflows.yml` at
+commit `dac4b81c298cb3ea6821ea312efa5375f42d5ccb`. It validates Actions
+workflow syntax and compiles and checks generated locks whenever local gh-aw
+sources are present.
+
+No agentic documentation-upkeep workflow is enabled. With the current gh-aw
+compiler, the generated conclusion job retains write permissions in addition
+to the isolated safe-output handler. The docs workflow was removed rather
+than weakening permissions or hand-editing its generated lock; reconsider it
+only after the central compiler can limit write scopes to the safe-output
+handler.
 
 ## Lesson Summary
 
