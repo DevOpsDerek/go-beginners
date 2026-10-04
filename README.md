@@ -21,7 +21,7 @@ You will learn how to:
 - Go 1.22+
 - A terminal
 - VS Code with the Go extension (recommended)
-- `golangci-lint` for local linting
+- `golangci-lint` v1.64.8 for local linting (the configuration uses the v1 format)
 
 ## Install Go and golangci-lint
 
@@ -31,11 +31,15 @@ Install Go from the official downloads page:
 Install `golangci-lint`:
 
 ```bash
-brew install golangci-lint
+go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.64.8
 ```
 
 Or see the official install guide:
 - https://golangci-lint.run/welcome/install/
+
+Use a Go toolchain supported by that linter release when installing it
+(Go 1.23.12 is a verified option). Installing the latest golangci-lint v2
+will not work with the existing v1 configuration.
 
 ## Project Layout
 
@@ -95,6 +99,37 @@ Then run:
 ```bash
 go run .
 ```
+
+## Automation and human review
+
+CI retains the `Lint (golangci-lint)` and `Test (go test)` jobs, Go 1.22.12,
+golangci-lint v1.64.8, and the `go-test-results` artifact (`test-results.out`).
+The central `run-checked-script` Go API cannot preserve the existing verbose,
+uncached test command, artifact handling, or lint job, so these specialized
+jobs remain unchanged apart from immutable action pins and read-only
+permissions.
+
+The `validate-automation` job in the existing CI workflow calls the central
+`DevOpsDerek/workflows/.github/workflows/validate-agentic-workflows.yml` at
+commit `dac4b81c298cb3ea6821ea312efa5375f42d5ccb`. It checks Actions syntax and
+recompiles local GitHub Agentic Workflows (gh-aw) sources with v0.89.21,
+rejecting stale generated locks.
+
+`documentation-upkeep.md` imports the central documentation pattern at the
+same immutable commit, with imports embedded in its generated lock. It runs
+**only on manual dispatch** and cross-checks this README against lesson
+packages, exported symbols, tests, and CI configuration. The agent has
+read-only repository access; the isolated safe-output job can propose at most
+one **draft PR modifying only README.md**, with no fallback issue. It does not
+run lesson code, automatically merge, release, deploy, or publish.
+
+To update the workflow, install gh-aw v0.89.21, edit its Markdown source, and
+run `gh aw compile --validate --actionlint --no-check-update`. Commit and review
+the source and generated `.lock.yml` together. Manual execution requires the
+gh-aw Copilot engine credential (`COPILOT_GITHUB_TOKEN`) and repository
+permission for Actions to create pull requests. No credentials are configured
+by this change. A maintainer must review every proposed diff and run CI before
+merging; draft output is not a substitute for branch-protection rules.
 
 ## Lesson Summary
 
